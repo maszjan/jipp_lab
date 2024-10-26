@@ -50,36 +50,43 @@ coursesNumber, courses = getMinimamalCoursesWithPackages(packages, maxWeight)
 
 
 def bfs(graph, start, end):
-    queue = deque([start])
-    visited = set([start])
-    predecessors = {start: None}
+    queue = deque([[start]])
+    visited = set()
 
     while queue:
-        node = queue.popleft()
-
+        path = queue.popleft()
+        node = path[-1]
         if node == end:
-            path = []
-            while node is not None:
-                path.append(node)
-                node = predecessors[node]
-            path.reverse()
             return path
 
-        for neighbour in graph[node]:
-            if neighbour not in visited:
-                visited.add(neighbour)
-                queue.append(neighbour)
-                predecessors[neighbour] = node
+        if node not in visited:
+            for neighbour in graph.get(node,[]):
+                new_path = list(path)
+                new_path.append(neighbour)
+                queue.append(new_path)
+            visited.add(node)
 
     return None
 
-exampleGraph = {
-    'A': ['B', 'D'],
-    'B': ['A', 'D', 'C'],
-    'C': ['B', 'F'],
-    'D': ['B', 'A', 'E', 'F'],
-    'E': ['D', 'F'],
-    'F': ['D', 'E', 'C']
+graph = {
+    '1': ['2', '3', '5'],
+    '2': ['1', '3', '4', '5'],
+    '3': ['1', '2', '4'],
+    '4': ['2', '3', '5'],
+    '5': ['1', '2', '4'],
 }
 
-print (bfs(exampleGraph, 'F', 'B'))
+print (bfs(graph, '1', '4'))
+
+#   Zadanie 3 Optymalizacja Rozmieszczenia Zadań (Proceduralne i Funkcyjne)
+#   Masz N zadań do wykonania, każde zadanie ma przypisany czas wykonania oraz nagrodę za jego
+#   ukończenie. Twoim celem jest zaplanowanie kolejności wykonywania zadań, aby zminimalizować
+#   całkowity czas oczekiwania na ich wykonanie i zmaksymalizować zysk. Zaimplementuj rozwiązanie przy
+#   użyciu programowania proceduralnego oraz funkcyjnego.
+#   Wymagania:
+#       • Proceduralnie: Stwórz listę zadań i użyj pętli do sortowania i optymalizacji ich kolejności, aby
+#         zminimalizować całkowity czas oczekiwania.
+#       • Funkcyjnie: Użyj funkcji wyższego rzędu (sorted, map, reduce) do manipulacji listą zadań, aby
+#         osiągnąć optymalne rozwiązanie.
+#       • Program powinien zwrócić optymalną kolejność zadań oraz całkowity czas oczekiwania.
+
