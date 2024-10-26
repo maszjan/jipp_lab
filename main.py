@@ -1,4 +1,5 @@
 from functools import reduce
+import numpy as np
 
 #     Zadanie 1. Analiza Tekstu i Transformacje Funkcyjne
 #     Napisz program, który przyjmuje długi tekst (np. artykuł, książkę) i wykonuje kilka złożonych operacji
@@ -47,3 +48,73 @@ ala ma kota
 """
 
 print(text_analysis(text))
+
+#   Zadanie 2: Walidacja i Przekształcenia Operacji na Macierzach
+#   Stwórz system, który przyjmuje operacje na macierzach jako stringi i wykonuje je dynamicznie,
+#   zapewniając jednocześnie walidację poprawności operacji:
+#       • Operacje mogą obejmować dodawanie, mnożenie i transponowanie macierzy.
+#       • System powinien sprawdzać poprawność operacji (zgodność wymiarów) i zwracać wynik w
+#       postaci macierzy.
+#       • Wykorzystaj eval() i exec() do wykonywania operacji na macierzach, a także funkcje
+#       walidacyjne, które sprawdzają poprawność przed wykonaniem.
+#   Wskazówka: Zaimplementuj walidację operacji i użyj funkcji funkcyjnych do przekształceń i obliczeń na
+#   macierzach.
+
+import numpy as np
+
+def validate_addition(matrix1, matrix2):
+    return matrix1.shape == matrix2.shape
+
+def validate_multiplication(matrix1, matrix2):
+    return matrix1.shape[1] == matrix2.shape[0]
+
+def perform_operation(operation, matrix1=None, matrix2=None, axes=None):
+    if operation == "add":
+        if validate_addition(matrix1, matrix2):
+            return matrix1 + matrix2
+        else:
+            raise ValueError("Dimensions do not match for addition.")
+    elif operation == "multiply":
+        if validate_multiplication(matrix1, matrix2):
+            return np.dot(matrix1, matrix2)
+        else:
+            raise ValueError("Dimensions do not match for multiplication.")
+    elif operation == "transpose":
+        if axes is not None:
+            return np.transpose(matrix1, axes=axes)
+        else:
+            return matrix1.T
+    else:
+        raise ValueError("Unsupported operation.")
+
+def matrix_operation(input_string):
+    try:
+        operation, matrices = input_string.split(':')
+        matrices = eval(matrices)
+
+        matrices = [np.array(matrix) for matrix in matrices]
+
+        if operation == "add":
+            result = perform_operation("add", matrices[0], matrices[1])
+        elif operation == "multiply":
+            result = perform_operation("multiply", matrices[0], matrices[1])
+        elif operation == "transpose":
+            if len(matrices) > 1:
+                axes = tuple(matrices[1])
+                result = perform_operation("transpose", matrices[0], axes=axes)
+            else:
+                result = perform_operation("transpose", matrices[0])
+        else:
+            raise ValueError("Unsupported operation.")
+
+        return result
+    except Exception as e:
+        return str(e)
+
+input_string_add = "add: ([[1, 2], [3, 4]], [[5, 6], [7, 8]])"
+input_string_multiply = "multiply: ([[1, 2], [3, 4]], [[5, 6], [7, 8]])"
+input_string_transpose = "transpose: ([[1, 2], [3, 4]], (1, 0))"
+
+print("Addition Result:\n", matrix_operation(input_string_add))
+print("Multiplication Result:\n", matrix_operation(input_string_multiply))
+print("Transposition Result:\n", matrix_operation(input_string_transpose))
