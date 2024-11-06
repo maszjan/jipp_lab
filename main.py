@@ -1,4 +1,5 @@
 from collections import deque
+from functools import reduce
 
 #   Zadanie 1. Problem Podziału Paczek (Prograowanie Proceduralne)
 #       Mamy listę paczek o różnych wagach oraz maksymalną wagę, jaką może unieść kurier w jednym kursie.
@@ -90,3 +91,55 @@ print (bfs(graph, '1', '4'))
 #         osiągnąć optymalne rozwiązanie.
 #       • Program powinien zwrócić optymalną kolejność zadań oraz całkowity czas oczekiwania.
 
+
+class Task:
+    def __init__(self, execution_time, reward):
+        self.execution_time = execution_time
+        self.reward = reward
+
+    def __repr__(self):
+        return f"Task(execution_time={self.execution_time}, reward={self.reward})"
+
+
+example_tasks = [
+    Task(3, 50),
+    Task(1, 20),
+    Task(2, 30),
+    Task(5, 60),
+    Task(4, 40)
+]
+
+
+def optimize_tasks_procedural(tasks):
+    tasks.sort(key=lambda task: task.execution_time)
+
+    total_waiting_time = 0
+    current_time = 0
+    for task in tasks:
+        current_time += task.execution_time
+        total_waiting_time += current_time
+
+    return tasks, total_waiting_time
+
+
+
+
+
+def optimize_tasks_functional(tasks):
+    sorted_tasks = sorted(tasks, key=lambda task: task.execution_time)
+
+    total_waiting_time = reduce(lambda acc, task: acc + task.execution_time, sorted_tasks, 0)
+
+    return sorted_tasks, total_waiting_time
+
+
+
+optimized_tasks_procedural, total_waiting_time_procedural = optimize_tasks_procedural(example_tasks.copy())
+print("Proceduralne podejście:")
+print("Optymalna kolejność zadań:", optimized_tasks_procedural)
+print("Całkowity czas oczekiwania:", total_waiting_time_procedural)
+
+optimized_tasks_functional, total_waiting_time_functional = optimize_tasks_functional(example_tasks.copy())
+print("\nFunkcyjne podejście:")
+print("Optymalna kolejność zadań:", optimized_tasks_functional)
+print("Całkowity czas oczekiwania:", total_waiting_time_functional)
