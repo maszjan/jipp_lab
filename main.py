@@ -1,5 +1,6 @@
 from functools import reduce
 
+
 #     Zadanie 1. Analiza Tekstu i Transformacje Funkcyjne
 #     Napisz program, który przyjmuje długi tekst (np. artykuł, książkę) i wykonuje kilka złożonych operacji
 #     analizy tekstu:
@@ -164,3 +165,67 @@ print("Najdłuższy napis:", result["longest_string"])
 print("Krotka o największej liczbie elementów:", result["largest_tuple"])
 
 
+#           Zadanie 4 Implementacja Złożonej Funkcji Matrycowej z Użyciem reduce()
+#           Napisz program, który przyjmuje listę macierzy i łączy je w jedną za pomocą operacji zdefiniowanej
+#           przez użytkownika (np. suma macierzy, iloczyn), korzystając z reduce(). Program powinien:
+#               • Dynamicznie wywoływać różne operacje (np. sumowanie, mnożenie) na macierzach.
+#               • Umożliwiać definiowanie niestandardowych operacji przez użytkownika.
+#           Wskazówka: Wykorzystaj reduce() do łączenia macierzy oraz eval() do dynamicznej definicji operacji.
+
+
+def validate_addition_matrix(matrix1, matrix2):
+    return len(matrix1) == len(matrix2) and all(len(row) == len(matrix2[i]) for i, row in enumerate(matrix1))
+
+
+def validate_multiplication_matrix(matrix1, matrix2):
+    return len(matrix1[0]) == len(matrix2)
+
+
+def add_matrices(matrix1, matrix2):
+    return [[matrix1[i][j] + matrix2[i][j] for j in range(len(matrix1[0]))] for i in range(len(matrix1))]
+
+
+def multiply_matrices(matrix1, matrix2):
+    result = [[0 for _ in range(len(matrix2[0]))] for _ in range(len(matrix1))]
+    for i in range(len(matrix1)):
+        for j in range(len(matrix2[0])):
+            for k in range(len(matrix2)):
+                result[i][j] += matrix1[i][k] * matrix2[k][j]
+    return result
+
+
+def perform_custom_operation(operation, matrix1, matrix2):
+    return eval(
+        f"[[matrix1[i][j] {operation} matrix2[i][j] for j in range(len(matrix1[0]))] for i in range(len(matrix1))]")
+
+
+def combine_matrices(matrices_to_combine, operation):
+    if not matrices_to_combine:
+        raise ValueError("Brak podanych macierzy.")
+
+    if len(matrices_to_combine) == 1:
+        return matrices_to_combine[0]
+
+    if operation == "add":
+        return reduce(lambda acc, matrix: add_matrices(acc, matrix) if validate_addition_matrix(acc, matrix) else acc,matrices_to_combine)
+    elif operation == "multiply":
+        return reduce(lambda acc, matrix: multiply_matrices(acc, matrix) if validate_multiplication_matrix(acc, matrix) else acc,matrices_to_combine)
+    else:
+        return reduce(lambda acc, matrix: perform_custom_operation(operation, acc, matrix) if validate_addition_matrix(acc, matrix) else acc, matrices_to_combine)
+
+
+# Przykładowe użycie
+matrices = [
+    [[1, 2], [3, 4]],
+    [[5, 6], [7, 8]],
+    [[9, 10], [11, 12]]
+]
+
+operation_add = "add"
+operation_multiply = "multiply"
+operation_custom = "+"
+
+print("Suma macierzy:\n", combine_matrices(matrices, operation_add))
+print("Iloczyn macierzy:\n",
+      combine_matrices(matrices[:2], operation_multiply))  # Tylko pierwsze dwie macierze do mnożenia
+print("Niestandardowa operacja (dodawanie) na macierzach:\n", combine_matrices(matrices, operation_custom))
