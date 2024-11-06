@@ -163,7 +163,7 @@ class Item:
     def __repr__(self):
         return f"Item(waga={self.weight}, wartość={self.value})"
 
-items = [
+example_items = [
     Item(2, 3),
     Item(3, 4),
     Item(4, 5),
@@ -217,12 +217,90 @@ def knapsack_functional(items, max_capacity):
     return max_value, selected_items
 
 
-max_value_procedural, selected_items_procedural = knapsack_procedural(items, max_capacity)
+max_value_procedural, selected_items_procedural = knapsack_procedural(example_items, max_capacity)
 print("Proceduralne podejście:")
 print("Maksymalna wartość:", max_value_procedural)
 print("Wybrane przedmioty:", selected_items_procedural)
 
-max_value_functional, selected_items_functional = knapsack_functional(items, max_capacity)
+max_value_functional, selected_items_functional = knapsack_functional(example_items, max_capacity)
 print("\nFunkcyjne podejście:")
 print("Maksymalna wartość:", max_value_functional)
 print("Wybrane przedmioty:", selected_items_functional)
+
+#           Zadanie 5. Harmonogramowanie Zadań z Ograniczeniami (Programowanie Funkcyjne i Proceduralne)
+#           Masz zestaw zadań, gdzie każde zadanie ma określony czas rozpoczęcia, zakończenia oraz nagrodę za
+#           ukończenie. Twoim celem jest opracowanie harmonogramu, który maksymalizuje nagrodę, wykonując
+#           jak najwięcej niekolidujących zadań. Zadanie wymaga implementacji algorytmu planowania zadań,
+#           podobnego do problemu aktywności (Activity Selection Problem) przy użyciu podejścia proceduralnego i funkcyjnego.
+#           Wymagania:
+#               • Proceduralnie: Zaimplementuj algorytm zachłanny do selekcji zadań na podstawie czasu
+#                   zakończenia.
+#               • Funkcyjnie: Wykorzystaj funkcje wyższego rzędu, takie jak filter, sorted, reduce, aby
+#                   przefiltrować i posortować zadania oraz wybrać optymalny harmonogram.
+#               • Program powinien zwracać maksymalną możliwą nagrodę i listę zadań w optymalnym
+#                 harmonogramie.
+
+
+
+class Quest:
+    def __init__(self, start, end, reward):
+        self.start = start
+        self.end = end
+        self.reward = reward
+
+    def __repr__(self):
+        return f"Quest(start={self.start}, koniec={self.end}, nagroda={self.reward})"
+
+
+example_quests = [
+    Quest(1, 3, 50),
+    Quest(3, 5, 20),
+    Quest(0, 6, 30),
+    Quest(5, 7, 60),
+    Quest(5, 9, 40),
+    Quest(7, 8, 70)
+]
+
+
+def schedule_quests_procedural(quests):
+    quests.sort(key=lambda quest: quest.end)
+
+    selected_quests = []
+    last_end_time = 0
+    total_reward = 0
+
+    for quest in quests:
+        if quest.start >= last_end_time:
+            selected_quests.append(quest)
+            last_end_time = quest.end
+            total_reward += quest.reward
+
+    return total_reward, selected_quests
+
+
+
+def schedule_quests_functional(quests):
+    sorted_quests = sorted(quests, key=lambda quest: quest.end)
+
+    def select_quest(acc, quest):
+        last_end_time, selected_quests, total_reward = acc
+        if quest.start >= last_end_time:
+            selected_quests.append(quest)
+            return (quest.end, selected_quests, total_reward + quest.reward)
+        return acc
+
+    _, selected_quests, total_reward = reduce(select_quest, sorted_quests, (0, [], 0))
+
+    return total_reward, selected_quests
+
+
+# Przykładowe użycie
+max_reward_procedural, selected_quests_procedural = schedule_quests_procedural(example_quests)
+print("Proceduralne podejście:")
+print("Maksymalna nagroda:", max_reward_procedural)
+print("Wybrane zadania:", selected_quests_procedural)
+
+max_reward_functional, selected_quests_functional = schedule_quests_functional(example_quests)
+print("\nFunkcyjne podejście:")
+print("Maksymalna nagroda:", max_reward_functional)
+print("Wybrane zadania:", selected_quests_functional)
