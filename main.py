@@ -98,7 +98,7 @@ class Task:
         self.reward = reward
 
     def __repr__(self):
-        return f"Task(execution_time={self.execution_time}, reward={self.reward})"
+        return f"Task(czas_wykonania={self.execution_time}, nagroda={self.reward})"
 
 
 example_tasks = [
@@ -143,3 +143,86 @@ optimized_tasks_functional, total_waiting_time_functional = optimize_tasks_funct
 print("\nFunkcyjne podejście:")
 print("Optymalna kolejność zadań:", optimized_tasks_functional)
 print("Całkowity czas oczekiwania:", total_waiting_time_functional)
+
+
+
+#       Zadanie 4: Problem Optymalizacji Zasobów – Algorytm Plecakowy (Proceduralne i Funkcyjne) Masz ograniczoną pojemność plecaka oraz listę przedmiotów,
+#       z których każdy ma określoną wagę i wartość. Celem jest wybranie przedmiotów tak, aby zmaksymalizować łączną wartość w plecaku, nie przekraczając jego pojemności.
+#       Problem ten wymaga implementacji algorytmu plecakowego (knapsack problem) przy użyciu zarówno podejścia proceduralnego, jak i funkcyjnego.
+#       Wymagania:
+#           • Proceduralnie: Użyj podejścia dynamicznego (programowanie dynamiczne) do rozwiązania problemu.
+#           • Funkcyjnie: Zaimplementuj algorytm w stylu funkcyjnym z naciskiem na funkcje rekurencyjne oraz mapowanie.
+#           • Program powinien zwracać maksymalną wartość oraz listę przedmiotów, które powinny zostać wybrane do plecaka.
+
+
+class Item:
+    def __init__(self, weight, value):
+        self.weight = weight
+        self.value = value
+
+    def __repr__(self):
+        return f"Item(waga={self.weight}, wartość={self.value})"
+
+items = [
+    Item(2, 3),
+    Item(3, 4),
+    Item(4, 5),
+    Item(5, 8)
+]
+
+max_capacity = 5
+
+def knapsack_procedural(items, max_capacity):
+    n = len(items)
+    dp = [[0 for _ in range(max_capacity + 1)] for _ in range(n + 1)]
+
+    for i in range(1, n + 1):
+        for w in range(1, max_capacity + 1):
+            if items[i-1].weight <= w:
+                dp[i][w] = max(dp[i-1][w], dp[i-1][w-items[i-1].weight] + items[i-1].value)
+            else:
+                dp[i][w] = dp[i-1][w]
+
+    w = max_capacity
+    selected_items = []
+    for i in range(n, 0, -1):
+        if dp[i][w] != dp[i-1][w]:
+            selected_items.append(items[i-1])
+            w -= items[i-1].weight
+
+    return dp[n][max_capacity], selected_items
+
+def knapsack_functional(items, max_capacity):
+    def knapsack_recursive(n, w):
+        if n == 0 or w == 0:
+            return 0
+        if items[n-1].weight > w:
+            return knapsack_recursive(n-1, w)
+        else:
+            return max(knapsack_recursive(n-1, w), knapsack_recursive(n-1, w-items[n-1].weight) + items[n-1].value)
+
+    def get_selected_items(n, w):
+        if n == 0 or w == 0:
+            return []
+        if items[n-1].weight > w:
+            return get_selected_items(n-1, w)
+        else:
+            if knapsack_recursive(n-1, w) > knapsack_recursive(n-1, w-items[n-1].weight) + items[n-1].value:
+                return get_selected_items(n-1, w)
+            else:
+                return get_selected_items(n-1, w-items[n-1].weight) + [items[n-1]]
+
+    max_value = knapsack_recursive(len(items), max_capacity)
+    selected_items = get_selected_items(len(items), max_capacity)
+    return max_value, selected_items
+
+
+max_value_procedural, selected_items_procedural = knapsack_procedural(items, max_capacity)
+print("Proceduralne podejście:")
+print("Maksymalna wartość:", max_value_procedural)
+print("Wybrane przedmioty:", selected_items_procedural)
+
+max_value_functional, selected_items_functional = knapsack_functional(items, max_capacity)
+print("\nFunkcyjne podejście:")
+print("Maksymalna wartość:", max_value_functional)
+print("Wybrane przedmioty:", selected_items_functional)
