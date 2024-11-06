@@ -1,5 +1,4 @@
 from functools import reduce
-import numpy as np
 
 #     Zadanie 1. Analiza Tekstu i Transformacje Funkcyjne
 #     Napisz program, który przyjmuje długi tekst (np. artykuł, książkę) i wykonuje kilka złożonych operacji
@@ -11,7 +10,11 @@ import numpy as np
 #     Wskazówka: Użyj map(), filter(), i list składanych, aby przeprowadzać transformacje na tekście.
 
 def text_analysis(text):
-    stop_words = set(["w", "i", "o", "a", "z", "the", "and", "to", "of", "in", "that", "it", "is", "was", "he", "for", "on", "are", "as", "with", "his", "they", "at", "be", "this", "have", "from", "or", "one", "had", "by", "word", "but", "not", "what", "all", "were", "we", "when", "your", "can", "said", "there", "use", "an", "each", "which", "she", "do", "how", "their", "if"])
+    stop_words = set(
+        ["w", "i", "o", "a", "z", "the", "and", "to", "of", "in", "that", "it", "is", "was", "he", "for", "on", "are",
+         "as", "with", "his", "they", "at", "be", "this", "have", "from", "or", "one", "had", "by", "word", "but",
+         "not", "what", "all", "were", "we", "when", "your", "can", "said", "there", "use", "an", "each", "which",
+         "she", "do", "how", "their", "if"])
 
     paragraphs = text.split('\n\n')
     sentences = reduce(lambda acc, para: acc + para.split('. '), paragraphs, [])
@@ -62,11 +65,14 @@ print(text_analysis(text))
 
 import numpy as np
 
+
 def validate_addition(matrix1, matrix2):
     return matrix1.shape == matrix2.shape
 
+
 def validate_multiplication(matrix1, matrix2):
     return matrix1.shape[1] == matrix2.shape[0]
+
 
 def perform_operation(operation, matrix1=None, matrix2=None, axes=None):
     if operation == "add":
@@ -86,6 +92,7 @@ def perform_operation(operation, matrix1=None, matrix2=None, axes=None):
             return matrix1.T
     else:
         raise ValueError("Unsupported operation.")
+
 
 def matrix_operation(input_string):
     try:
@@ -111,10 +118,49 @@ def matrix_operation(input_string):
     except Exception as e:
         return str(e)
 
+
 input_string_add = "add: ([[1, 2], [3, 4]], [[5, 6], [7, 8]])"
 input_string_multiply = "multiply: ([[1, 2], [3, 4]], [[5, 6], [7, 8]])"
 input_string_transpose = "transpose: ([[1, 2], [3, 4]], (1, 0))"
 
-print("Addition Result:\n", matrix_operation(input_string_add))
-print("Multiplication Result:\n", matrix_operation(input_string_multiply))
-print("Transposition Result:\n", matrix_operation(input_string_transpose))
+print("Wynik dodawania:\n", matrix_operation(input_string_add))
+print("Wynik mnożenia:\n", matrix_operation(input_string_multiply))
+print("Wynik transponowania:\n", matrix_operation(input_string_transpose))
+
+
+#     Zadanie 3. Dynamiczne Wyznaczanie Ekstremów w Niejednorodnych Danych
+#     Napisz funkcję, która przyjmuje listę niejednorodnych danych (np. liczby, napisy, krotki, listy, słowniki) i
+#     wykonuje dynamiczną analizę danych, aby:
+#       • Zwrócić największą liczbę (lub wartość numeryczną) w danych.
+#       • Zwrócić najdłuższy napis.
+#       • Zwrócić krotkę o największej liczbie elementów.
+#     Wskazówka: Użyj filter() do selekcji odpowiednich typów danych oraz map() do przekształceń na
+#     elementach.
+
+def dynamic_analysis(data_to_analyse):
+    numerical_values = list(filter(lambda x: isinstance(x, (int, float)), data_to_analyse))
+    max_number = max(numerical_values) if numerical_values else None
+
+    strings = list(filter(lambda x: isinstance(x, str), data))
+    longest_string = max(strings, key=len) if strings else None
+
+    tuples = list(filter(lambda x: isinstance(x, tuple), data))
+    largest_tuple = max(tuples, key=len) if tuples else None
+
+    return {
+        "max_number": max_number,
+        "longest_string": longest_string,
+        "largest_tuple": largest_tuple
+    }
+
+
+data = [
+    42, "hello", (1, 2, 3), [1, 2, 3, 4], {"key": "value"}, 3.14, "world", (1, 2), "Python", (1, 2, 3, 4, 5)
+]
+
+result = dynamic_analysis(data)
+print("Największa liczba:", result["max_number"])
+print("Najdłuższy napis:", result["longest_string"])
+print("Krotka o największej liczbie elementów:", result["largest_tuple"])
+
+
