@@ -229,3 +229,68 @@ print("Suma macierzy:\n", combine_matrices(matrices, operation_add))
 print("Iloczyn macierzy:\n",
       combine_matrices(matrices[:2], operation_multiply))  # Tylko pierwsze dwie macierze do mnożenia
 print("Niestandardowa operacja (dodawanie) na macierzach:\n", combine_matrices(matrices, operation_custom))
+
+
+#               Zadanie 5. System Dynamicznego Generowania Kodów Python (Metaprogramowanie)
+#               Napisz narzędzie, które generuje dynamicznie kod w Pythonie na podstawie szablonów i danych
+#               wejściowych, a następnie uruchamia ten kod. Narzędzie powinno:
+#                   • Przyjmować szablon kodu jako string (np. def funkcja(x): return x + 2).
+#                   • Uzupełniać szablon o brakujące fragmenty kodu (np. zmienne, funkcje) w czasie działania.
+#                   • Weryfikować poprawność generowanego kodu przed uruchomieniem.
+#               Wskazówka: Wykorzystaj eval() i exec() w połączeniu z walidacją wejściową i generowaniem kodu z szablonów
+
+
+def generate_code(template, context):
+    """
+    Generuje kod Pythona, wypełniając szablon podanym kontekstem.
+
+    :param template: String reprezentujący szablon kodu.
+    :param context: Słownik zawierający zmienne i funkcje do wypełnienia szablonu.
+    :return: Wygenerowany kod jako string.
+    """
+    try:
+        for key, value in context.items():
+            if not isinstance(key, str):
+                raise ValueError("Klucze w kontekście muszą być stringami.")
+
+        code = template.format(**kontekst)
+
+        compile(code, '<string>', 'exec')
+
+        return code
+    except Exception as e:
+        return str(e)
+
+
+def execute_code(code):
+    """
+    Wykonuje wygenerowany kod Pythona.
+
+    :param code: String reprezentujący kod Pythona do wykonania.
+    :return: Wynik wykonanego kodu.
+    """
+    try:
+        exec_globals = {}
+        exec(code, exec_globals)
+        return exec_globals
+    except Exception as e:
+        return str(e)
+
+
+szablon = """
+def dynamic_function(x):
+    return x + {increment}
+
+result = dynamic_function({value})
+"""
+
+kontekst = {
+    "increment": 2,
+    "value": 5
+}
+
+generated_code = generate_code(szablon, kontekst)
+print("Wygenerowany kod:\n", generated_code)
+
+execution_result = execute_code(generated_code)
+print("Wynik wykonania:\n", execution_result.get('result'))
