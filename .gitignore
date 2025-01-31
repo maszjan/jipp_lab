@@ -1,0 +1,47 @@
+# Ignore build artifacts
+bin/
+obj/
+
+# Ignore Visual Studio specific files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore package directories
+packages/
+!packages/repositories.config
+
+# Ignore JetBrains Rider files
+.idea/
+*.iml
+
+# Ignore temporary files
+*.tmp
+*.bak
+*.swp
+*.sln.cache
+
+# Ignore build results
+*.exe
+*.dll
+*.pdb
+*.log
+*.cache
+
+# Ignore generated files
+*.fsproj.user
+
+# Ignore NuGet dependencies
+*.nupkg
+*.snupkg
+
+# Ignore local test results
+TestResults/
+*.trx
+*.coverage
+
+# Ignore Resharper files
+_ReSharper*/
+*.DotSettings.user
